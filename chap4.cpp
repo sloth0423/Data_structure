@@ -13,14 +13,18 @@ void init_stack(StackType* s) {
 	s->top = -1;
 	s->capacity = 1;
 	s->data = (element*)malloc(s->capacity * sizeof(element));
+	if (s->data == NULL) {
+		fprintf(stderr, "error!\n");
+		exit(1);
+	}
 }
 void delete1(StackType* s) {
 	free(s->data);
 }
-bool is_empty(StackType* s) {
+int is_empty(StackType* s) {
 	return (s->top == -1);
 }
-bool is_full(StackType* s) {
+int is_full(StackType* s) {
 	return (s->top == (s->capacity) - 1);
 }
 void push(StackType* s, element item) {
@@ -29,6 +33,7 @@ void push(StackType* s, element item) {
 		element *temp = (element*)realloc(s->data, s->capacity * sizeof(element));
 		if (temp == NULL) {
 			fprintf(stderr, "error!");
+			delete1(s);
 			exit(1);
 		}
 		s->data = temp;
@@ -38,6 +43,7 @@ void push(StackType* s, element item) {
 element pop(StackType* s) {
 	if (is_empty(s)) {
 		fprintf(stderr, "error!");
+		delete1(s);
 		exit(1);
 	}
 	return s->data[(s->top)--];
@@ -45,6 +51,7 @@ element pop(StackType* s) {
 element peek(StackType* s) {
 	if (is_empty(s)) {
 		fprintf(stderr, "error!");
+		delete1(s);
 		exit(1);
 	}
 	return s->data[s->top];
@@ -76,10 +83,10 @@ int main() {
 //void init_stack(StackType* s) {
 //	s->top = -1;
 //}
-//bool is_empty(StackType* s) {
+//int is_empty(StackType* s) {
 //	return (s->top == -1);
 //}
-//bool is_full(StackType* s) {
+//int is_full(StackType* s) {
 //	return (s->top == MAX_STACK_SIZE);
 //}
 //void push(StackType* s, element item) {
@@ -139,10 +146,10 @@ int main() {
 //void init_stack(StackType* s) {
 //	s->top = -1;
 //}
-//bool is_empty(StackType* s) {
+//int is_empty(StackType* s) {
 //	return (s->top == -1);
 //}
-//bool is_full(StackType* s) {
+//int is_full(StackType* s) {
 //	return (s->top == MAX_STACK_SIZE);
 //}
 //void push(StackType* s, element item) {
@@ -198,10 +205,10 @@ int main() {
 //void init_stack(StackType *s) {
 //	s->top = -1;
 //}
-//bool is_empty(StackType *s) {
+//int is_empty(StackType *s) {
 //	return (s->top == -1);
 //}
-//bool is_full(StackType *s) {
+//int is_full(StackType *s) {
 //	return (s->top == MAX_STACK_SIZE);
 //}
 //void push(StackType* s, element item) {
@@ -252,10 +259,10 @@ int main() {
 //element stack[MAX_STACK_SIZE];
 //int top = -1;
 //
-// bool is_empty() {
+// int is_empty() {
 //	return (top == -1);
 //}
-// bool is_full() {
+// int is_full() {
 //	 return (top == MAX_STACK_SIZE);
 // }
 // void push(element item) {
@@ -299,12 +306,12 @@ int main() {
 //int stack[MAX_STACK_SIZE];
 //int top = -1;
 //
-//bool is_empty() {
+//int is_empty() {
 //	/*if (top == -1) return true;
 //	else return false;*/
 //	return (top == -1);
 //}
-//bool is_full() {
+//int is_full() {
 //	/*if (top == MAX_STACK_SIZE - 1) return true;
 //	else return false;*/
 //	return (top == MAX_STACK_SIZE - 1);
