@@ -4,62 +4,127 @@
 
 typedef int element;
 typedef struct StackTypeTag {
-	int data[MAX_STACK_SIZE];
+	element* data;
+	int capacity;
 	int top;
 }StackType;
 
 void init_stack(StackType* s) {
 	s->top = -1;
+	s->capacity = 1;
+	s->data = (element*)malloc(s->capacity * sizeof(element));
+}
+void delete1(StackType* s) {
+	free(s->data);
 }
 bool is_empty(StackType* s) {
 	return (s->top == -1);
 }
 bool is_full(StackType* s) {
-	return (s->top == MAX_STACK_SIZE);
+	return (s->top == (s->capacity) - 1);
 }
 void push(StackType* s, element item) {
 	if (is_full(s)) {
-		fprintf(stderr, "error!");
-		return;
+		s->capacity *= 2;
+		element *temp = (element*)realloc(s->data, s->capacity * sizeof(element));
+		if (temp == NULL) {
+			fprintf(stderr, "error!");
+			exit(1);
+		}
+		s->data = temp;
 	}
-	else s->data[++(s->top)] = item;
+	s->data[++(s->top)] = item;
 }
 element pop(StackType* s) {
 	if (is_empty(s)) {
 		fprintf(stderr, "error!");
 		exit(1);
 	}
-	else return s->data[(s->top)--];
+	return s->data[(s->top)--];
 }
 element peek(StackType* s) {
 	if (is_empty(s)) {
 		fprintf(stderr, "error!");
 		exit(1);
 	}
-	else return s->data[s->top];
+	return s->data[s->top];
 }
+
 int main() {
-	StackType *s1;
-	StackType* s2;
-	s1 = (StackType*)malloc(sizeof(StackType));
-	s2 = (StackType*)malloc(sizeof(StackType));
-
-	init_stack(s1);
-	init_stack(s2);
-	push(s1, 1);
-	push(s1, 2);
-	push(s1, 3);
-	push(s2, pop(s1));
-	push(s2, pop(s1));
-	push(s2, pop(s1));
-	printf("%d\n", pop(s2));
-	printf("%d\n", pop(s2));
-	printf("%d\n", pop(s2));
-	free(s1);
-	free(s2);
+	StackType s;
+	init_stack(&s);
+	push(&s, 1);
+	push(&s, 2);
+	push(&s, 3);
+	printf("%d\n", pop(&s));
+	printf("%d\n", pop(&s));
+	printf("%d\n", pop(&s));
+	delete1(&s);
 	return 0;
-
 }
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#define MAX_STACK_SIZE 100
+//
+//typedef int element;
+//typedef struct StackTypeTag {
+//	int data[MAX_STACK_SIZE];
+//	int top;
+//}StackType;
+//
+//void init_stack(StackType* s) {
+//	s->top = -1;
+//}
+//bool is_empty(StackType* s) {
+//	return (s->top == -1);
+//}
+//bool is_full(StackType* s) {
+//	return (s->top == MAX_STACK_SIZE);
+//}
+//void push(StackType* s, element item) {
+//	if (is_full(s)) {
+//		fprintf(stderr, "error!");
+//		return;
+//	}
+//	else s->data[++(s->top)] = item;
+//}
+//element pop(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		exit(1);
+//	}
+//	else return s->data[(s->top)--];
+//}
+//element peek(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		exit(1);
+//	}
+//	else return s->data[s->top];
+//}
+//int main() {
+//	StackType *s1;
+//	StackType* s2;
+//	s1 = (StackType*)malloc(sizeof(StackType));
+//	s2 = (StackType*)malloc(sizeof(StackType));
+//
+//	init_stack(s1);
+//	init_stack(s2);
+//	push(s1, 1);
+//	push(s1, 2);
+//	push(s1, 3);
+//	push(s2, pop(s1));
+//	push(s2, pop(s1));
+//	push(s2, pop(s1));
+//	printf("%d\n", pop(s2));
+//	printf("%d\n", pop(s2));
+//	printf("%d\n", pop(s2));
+//	free(s1);
+//	free(s2);
+//	return 0;
+//
+//}
 
 //#include <stdio.h>
 //#include <stdlib.h>
