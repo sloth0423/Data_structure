@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #define MAX_STACK_SIZE 100
 
-typedef int element;
+typedef char element;
 typedef struct StackTypeTag {
-	element* data;
+	element *data;
 	int capacity;
 	int top;
 }StackType;
 
-void init_stack(StackType* s) {
+void init_stack(StackType *s) {
 	s->top = -1;
 	s->capacity = 1;
 	s->data = (element*)malloc(s->capacity * sizeof(element));
@@ -18,19 +19,19 @@ void init_stack(StackType* s) {
 		exit(1);
 	}
 }
-void delete1(StackType* s) {
+void delete1(StackType *s) {
 	free(s->data);
 }
-int is_empty(StackType* s) {
+int is_empty(StackType *s) {
 	return (s->top == -1);
 }
-int is_full(StackType* s) {
+int is_full(StackType *s) {
 	return (s->top == (s->capacity) - 1);
 }
-void push(StackType* s, element item) {
+void push(StackType *s, element item) {
 	if (is_full(s)) {
 		s->capacity *= 2;
-		element *temp = (element*)realloc(s->data, s->capacity * sizeof(element));
+		element *temp = (element *)realloc(s->data, s->capacity * sizeof(element));
 		if (temp == NULL) {
 			fprintf(stderr, "error!");
 			delete1(s);
@@ -40,7 +41,7 @@ void push(StackType* s, element item) {
 	}
 	s->data[++(s->top)] = item;
 }
-element pop(StackType* s) {
+element pop(StackType *s) {
 	if (is_empty(s)) {
 		fprintf(stderr, "error!");
 		delete1(s);
@@ -48,7 +49,7 @@ element pop(StackType* s) {
 	}
 	return s->data[(s->top)--];
 }
-element peek(StackType* s) {
+element peek(StackType *s) {
 	if (is_empty(s)) {
 		fprintf(stderr, "error!");
 		delete1(s);
@@ -56,19 +57,137 @@ element peek(StackType* s) {
 	}
 	return s->data[s->top];
 }
-
-int main() {
+int check_matching(const char *expr) {
 	StackType s;
+	element ch, open_ch;
 	init_stack(&s);
-	push(&s, 1);
-	push(&s, 2);
-	push(&s, 3);
-	printf("%d\n", pop(&s));
-	printf("%d\n", pop(&s));
-	printf("%d\n", pop(&s));
+	for(int i = 0; i < strlen(expr); i++) {
+		ch = expr[i];
+		switch (ch) {
+		case '(': case '[': case '{':
+			push(&s, ch);
+			break;
+		case ')': case ']': case '}':
+			if (is_empty(&s)) {
+				delete1(&s);
+				return 0;
+			}
+			open_ch = pop(&s);
+			if ((ch != ')' && open_ch == '(') || (ch != '}' && open_ch == '{') || (ch != ']' && open_ch == '[')) {
+				delete1(&s);
+				return 0;
+			}
+			break;
+		}
+	}
+	if (!is_empty(&s)) {
+		delete1(&s);
+		return 0;
+	}
 	delete1(&s);
+	return 1;
+}
+int main() {
+	StackType expr;
+	init_stack(&expr);
+	push(&expr, '{');
+	push(&expr, ' ');
+	push(&expr, 'A');
+	push(&expr, '[');
+	push(&expr, '(');
+	push(&expr, 'i');
+	push(&expr, '+');
+	push(&expr, '1');
+	push(&expr, ')');
+	push(&expr, ']');
+	push(&expr, '=');
+	push(&expr, '0');
+	push(&expr, ';');
+	push(&expr, ' ');
+	push(&expr, '}');
+	push(&expr, '\0');
+
+	if (check_matching(expr.data) == 1) {
+		printf("%s 괄호 검사 성공\n", expr.data);
+	}
+	else {
+		printf("%s 괄호 검사 실패\n", expr.data);
+	}
+	delete1(&expr);
 	return 0;
 }
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#define MAX_STACK_SIZE 100
+//
+//typedef int element;
+//typedef struct StackTypeTag {
+//	element* data;
+//	int capacity;
+//	int top;
+//}StackType;
+//
+//void init_stack(StackType* s) {
+//	s->top = -1;
+//	s->capacity = 1;
+//	s->data = (element*)malloc(s->capacity * sizeof(element));
+//	if (s->data == NULL) {
+//		fprintf(stderr, "error!\n");
+//		exit(1);
+//	}
+//}
+//void delete1(StackType* s) {
+//	free(s->data);
+//}
+//int is_empty(StackType* s) {
+//	return (s->top == -1);
+//}
+//int is_full(StackType* s) {
+//	return (s->top == (s->capacity) - 1);
+//}
+//void push(StackType* s, element item) {
+//	if (is_full(s)) {
+//		s->capacity *= 2;
+//		element *temp = (element*)realloc(s->data, s->capacity * sizeof(element));
+//		if (temp == NULL) {
+//			fprintf(stderr, "error!");
+//			delete1(s);
+//			exit(1);
+//		}
+//		s->data = temp;
+//	}
+//	s->data[++(s->top)] = item;
+//}
+//element pop(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[(s->top)--];
+//}
+//element peek(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[s->top];
+//}
+//
+//int main() {
+//	StackType s;
+//	init_stack(&s);
+//	push(&s, 1);
+//	push(&s, 2);
+//	push(&s, 3);
+//	printf("%d\n", pop(&s));
+//	printf("%d\n", pop(&s));
+//	printf("%d\n", pop(&s));
+//	delete1(&s);
+//	return 0;
+//}
 
 //#include <stdio.h>
 //#include <stdlib.h>
