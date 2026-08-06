@@ -3,7 +3,7 @@
 #include <string.h>
 #define MAX_STACK_SIZE 100
 #define MAZE_SIZE 10
-
+// git 테스트용 문장
 typedef struct elementTag {
 	short r;
 	short c;
