@@ -2,15 +2,20 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX_STACK_SIZE 100
+#define MAZE_SIZE 10
 
-typedef char element;
+typedef struct elementTag {
+	short r;
+	short c;
+}element;
+
 typedef struct StackTypeTag {
-	element *data;
+	element* data;
 	int capacity;
 	int top;
 }StackType;
 
-void init_stack(StackType *s) {
+void init_stack(StackType* s) {
 	s->top = -1;
 	s->capacity = 1;
 	s->data = (element*)malloc(s->capacity * sizeof(element));
@@ -19,19 +24,19 @@ void init_stack(StackType *s) {
 		exit(1);
 	}
 }
-void delete1(StackType *s) {
+void delete1(StackType* s) {
 	free(s->data);
 }
-int is_empty(StackType *s) {
+int is_empty(StackType* s) {
 	return (s->top == -1);
 }
-int is_full(StackType *s) {
+int is_full(StackType* s) {
 	return (s->top == (s->capacity) - 1);
 }
-void push(StackType *s, element item) {
+void push(StackType* s, element item) {
 	if (is_full(s)) {
 		s->capacity *= 2;
-		element *temp = (element *)realloc(s->data, s->capacity * sizeof(element));
+		element* temp = (element*)realloc(s->data, s->capacity * sizeof(element));
 		if (temp == NULL) {
 			fprintf(stderr, "error!");
 			delete1(s);
@@ -41,7 +46,7 @@ void push(StackType *s, element item) {
 	}
 	s->data[++(s->top)] = item;
 }
-element pop(StackType *s) {
+element pop(StackType* s) {
 	if (is_empty(s)) {
 		fprintf(stderr, "error!");
 		delete1(s);
@@ -49,7 +54,7 @@ element pop(StackType *s) {
 	}
 	return s->data[(s->top)--];
 }
-element peek(StackType *s) {
+element peek(StackType* s) {
 	if (is_empty(s)) {
 		fprintf(stderr, "error!");
 		delete1(s);
@@ -57,65 +62,440 @@ element peek(StackType *s) {
 	}
 	return s->data[s->top];
 }
-int check_matching(const char *expr) {
-	StackType s;
-	element ch, open_ch;
-	init_stack(&s);
-	for(int i = 0; i < strlen(expr); i++) {
-		ch = expr[i];
-		switch (ch) {
-		case '(': case '[': case '{':
-			push(&s, ch);
-			break;
-		case ')': case ']': case '}':
-			if (is_empty(&s)) {
-				delete1(&s);
-				return 0;
-			}
-			open_ch = pop(&s);
-			if ((ch != ')' && open_ch == '(') || (ch != '}' && open_ch == '{') || (ch != ']' && open_ch == '[')) {
-				delete1(&s);
-				return 0;
-			}
-			break;
-		}
-	}
-	if (!is_empty(&s)) {
-		delete1(&s);
-		return 0;
-	}
-	delete1(&s);
-	return 1;
-}
-int main() {
-	StackType expr;
-	init_stack(&expr);
-	push(&expr, '{');
-	push(&expr, ' ');
-	push(&expr, 'A');
-	push(&expr, '[');
-	push(&expr, '(');
-	push(&expr, 'i');
-	push(&expr, '+');
-	push(&expr, '1');
-	push(&expr, ')');
-	push(&expr, ']');
-	push(&expr, '=');
-	push(&expr, '0');
-	push(&expr, ';');
-	push(&expr, ' ');
-	push(&expr, '}');
-	push(&expr, '\0');
 
-	if (check_matching(expr.data) == 1) {
-		printf("%s 괄호 검사 성공\n", expr.data);
+element here = { 1,0 }, entry = { 1,0 };
+
+char maze[MAZE_SIZE][MAZE_SIZE] = {
+	{'1','1','1','1','1','1','1','1','1','1'},
+	{'e','0','0','0','1','0','0','0','0','1'},
+	{'1','0','0','0','1','0','0','0','0','1'},
+	{'1','0','1','1','1','0','0','1','0','1'},
+	{'1','0','0','0','1','0','0','1','0','1'},
+	{'1','0','1','0','1','0','0','1','0','1'},
+	{'1','0','1','0','1','0','0','1','0','1'},
+	{'1','0','1','0','1','0','0','1','0','1'},
+	{'1','0','1','0','0','0','0','1','0','x'},
+	{'1','1','1','1','1','1','1','1','1','1'}
+};
+void push_loc(StackType* s, int r, int c) {
+	if (r < 0 || c < 0) return;
+	if (maze[r][c] != '1' && maze[r][c] != '.') {
+		element tmp;
+		tmp.r = r;
+		tmp.c = c;
+		push(s, tmp);
 	}
-	else {
-		printf("%s 괄호 검사 실패\n", expr.data);
+}
+void maze_print(char maze[MAZE_SIZE][MAZE_SIZE]) {
+	printf("\n");
+	for (int r = 0; r < MAZE_SIZE; r++) {
+		for (int c = 0; c < MAZE_SIZE; c++) {
+			printf("%c", maze[r][c]);
+		}
+		printf("\n");
 	}
-	delete1(&expr);
+}
+
+int main() {
+	int r, c;
+	StackType s;
+
+	init_stack(&s);
+	here = entry;
+	while (maze[here.r][here.c] != 'x') {
+		r = here.r;
+		c = here.c;
+		maze[r][c] = '.';
+		maze_print(maze);
+		push_loc(&s, r - 1, c);
+		push_loc(&s, r + 1, c);
+		push_loc(&s, r, c - 1);
+		push_loc(&s, r, c + 1);
+		if (is_empty(&s)) {
+			printf("실패\n");
+			return 1;
+		}
+		else
+			here = pop(&s);
+	}
+	printf("성공\n");
 	return 0;
 }
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#define MAX_STACK_SIZE 100
+//
+//typedef int element;
+//typedef struct StackTypeTag {
+//	element* data;
+//	int capacity;
+//	int top;
+//}StackType;
+//
+//void init_stack(StackType* s) {
+//	s->top = -1;
+//	s->capacity = 1;
+//	s->data = (element*)malloc(s->capacity * sizeof(element));
+//	if (s->data == NULL) {
+//		fprintf(stderr, "error!\n");
+//		exit(1);
+//	}
+//}
+//void delete1(StackType* s) {
+//	free(s->data);
+//}
+//int is_empty(StackType* s) {
+//	return (s->top == -1);
+//}
+//int is_full(StackType* s) {
+//	return (s->top == (s->capacity) - 1);
+//}
+//void push(StackType* s, element item) {
+//	if (is_full(s)) {
+//		s->capacity *= 2;
+//		element* temp = (element*)realloc(s->data, s->capacity * sizeof(element));
+//		if (temp == NULL) {
+//			fprintf(stderr, "error!");
+//			delete1(s);
+//			exit(1);
+//		}
+//		s->data = temp;
+//	}
+//	s->data[++(s->top)] = item;
+//}
+//element pop(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[(s->top)--];
+//}
+//element peek(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[s->top];
+//}
+//int prec(char op) {
+//	switch (op) {
+//	case'(': case ')': return 0;
+//	case '+': case '-': return 1;
+//	case '*': case '/': return 2;
+//	}
+//	return -1;
+//}
+//char *infix_to_postfix(const char *exp) {
+//	StackType s;
+//	char *result = (char *)malloc(100 * sizeof(char));
+//	size_t len = strlen(exp);
+//	size_t len2 = 0;
+//	init_stack(&s);
+//
+//	for (int i = 0; i < len; i++) {
+//		if (exp[i] == '*' || exp[i] == '+' || exp[i] == '/' || exp[i] == '-') {
+//			for (;!(is_empty(&s)) && (prec(peek(&s)) >= prec(exp[i]));) {
+//				result[len2] = pop(&s);
+//				len2++;
+//			}
+//			push(&s, exp[i]);
+//		}
+//		else if (exp[i] == '(') {
+//			push(&s, exp[i]);
+//		}
+//		else if (exp[i] == ')') {
+//			while (s.data[s.top] != '(') {
+//				result[len2] = pop(&s);
+//				len2++;
+//			}
+//			pop(&s);
+//		}
+//		else {
+//			result[len2] = exp[i];
+//			len2++;
+//		}
+//	}
+//	while (!(is_empty(&s))) {
+//		result[len2] = pop(&s);
+//		len2++;
+//	}
+//	result[len2] = '\0';
+//	delete1(&s);
+//	return result;
+//}
+//
+//int eval(const char *exp) {
+//	int value = 0;
+//	int op1, op2 = 0;
+//	char ch;
+//	size_t len = strlen(exp);
+//	StackType s;
+//	init_stack(&s);
+//	for (int i = 0; i < len; i++) {
+//		if (exp[i] == '*' || exp[i] == '/' || exp[i] == '+' || exp[i] == '-') {
+//			ch = exp[i];
+//			op1 = pop(&s);
+//			op2 = pop(&s);
+//			switch (ch) {
+//			case '*':
+//				push(&s, op2 * op1);
+//				break;
+//			case '/':
+//				push(&s, op2 / op1);
+//				break;
+//			case '+':
+//				push(&s, op2 + op1);
+//				break;
+//			case '-':
+//				push(&s, op2 - op1);
+//				break;
+//			}
+//		}
+//		else {
+//			value = exp[i] - '0';
+//			push(&s, value);
+//		}
+//	}
+//	int result = pop(&s);
+//	delete1(&s);
+//	return result;
+//}
+//int main() {
+//	int result;
+//	printf("후위표기식은 82/3-32*+\n");
+//	result = eval("82/3-32*+");
+//	printf("결과 값은 %d\n", result);
+//	char *rslt = infix_to_postfix("a+b*c");
+//	printf("%s\n", rslt);
+//	free(rslt);
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#define MAX_STACK_SIZE 100
+//
+//typedef int element;
+//typedef struct StackTypeTag {
+//	element* data;
+//	int capacity;
+//	int top;
+//}StackType;
+//
+//void init_stack(StackType* s) {
+//	s->top = -1;
+//	s->capacity = 1;
+//	s->data = (element*)malloc(s->capacity * sizeof(element));
+//	if (s->data == NULL) {
+//		fprintf(stderr, "error!\n");
+//		exit(1);
+//	}
+//}
+//void delete1(StackType* s) {
+//	free(s->data);
+//}
+//int is_empty(StackType* s) {
+//	return (s->top == -1);
+//}
+//int is_full(StackType* s) {
+//	return (s->top == (s->capacity) - 1);
+//}
+//void push(StackType* s, element item) {
+//	if (is_full(s)) {
+//		s->capacity *= 2;
+//		element* temp = (element*)realloc(s->data, s->capacity * sizeof(element));
+//		if (temp == NULL) {
+//			fprintf(stderr, "error!");
+//			delete1(s);
+//			exit(1);
+//		}
+//		s->data = temp;
+//	}
+//	s->data[++(s->top)] = item;
+//}
+//element pop(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[(s->top)--];
+//}
+//element peek(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[s->top];
+//}
+//int eval(const char *exp) {
+//	int value = 0;
+//	int op1, op2 = 0;
+//	char ch;
+//	size_t len = strlen(exp);
+//	StackType s;
+//	init_stack(&s);
+//	for (int i = 0; i < len; i++) {
+//		if (exp[i] == '*' || exp[i] == '/' || exp[i] == '+' || exp[i] == '-') {
+//			ch = exp[i];
+//			op1 = pop(&s);
+//			op2 = pop(&s);
+//			switch (ch) {
+//			case '*':
+//				push(&s, op2 * op1);
+//				break;
+//			case '/':
+//				push(&s, op2 / op1);
+//				break;
+//			case '+':
+//				push(&s, op2 + op1);
+//				break;
+//			case '-':
+//				push(&s, op2 - op1);
+//				break;
+//			}
+//		}
+//		else {
+//			value = exp[i] - '0';
+//			push(&s, value);
+//		}
+//	}
+//	int result = pop(&s);
+//	delete1(&s);
+//	return result;
+//}
+//int main() {
+//	int result;
+//	printf("후위표기식은 82/3-32*+\n");
+//	result = eval("82/3-32*+");
+//	printf("결과 값은 %d\n", result);
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#define MAX_STACK_SIZE 100
+//
+//typedef char element;
+//typedef struct StackTypeTag {
+//	element *data;
+//	int capacity;
+//	int top;
+//}StackType;
+//
+//void init_stack(StackType *s) {
+//	s->top = -1;
+//	s->capacity = 1;
+//	s->data = (element*)malloc(s->capacity * sizeof(element));
+//	if (s->data == NULL) {
+//		fprintf(stderr, "error!\n");
+//		exit(1);
+//	}
+//}
+//void delete1(StackType *s) {
+//	free(s->data);
+//}
+//int is_empty(StackType *s) {
+//	return (s->top == -1);
+//}
+//int is_full(StackType *s) {
+//	return (s->top == (s->capacity) - 1);
+//}
+//void push(StackType *s, element item) {
+//	if (is_full(s)) {
+//		s->capacity *= 2;
+//		element *temp = (element *)realloc(s->data, s->capacity * sizeof(element));
+//		if (temp == NULL) {
+//			fprintf(stderr, "error!");
+//			delete1(s);
+//			exit(1);
+//		}
+//		s->data = temp;
+//	}
+//	s->data[++(s->top)] = item;
+//}
+//element pop(StackType *s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[(s->top)--];
+//}
+//element peek(StackType *s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[s->top];
+//}
+//int check_matching(const char *expr) {
+//	StackType s;
+//	element ch, open_ch;
+//	init_stack(&s);
+//	for(int i = 0; i < strlen(expr); i++) {
+//		ch = expr[i];
+//		switch (ch) {
+//		case '(': case '[': case '{':
+//			push(&s, ch);
+//			break;
+//		case ')': case ']': case '}':
+//			if (is_empty(&s)) {
+//				delete1(&s);
+//				return 0;
+//			}
+//			open_ch = pop(&s);
+//			if ((ch != ')' && open_ch == '(') || (ch != '}' && open_ch == '{') || (ch != ']' && open_ch == '[')) {
+//				delete1(&s);
+//				return 0;
+//			}
+//			break;
+//		}
+//	}
+//	if (!is_empty(&s)) {
+//		delete1(&s);
+//		return 0;
+//	}
+//	delete1(&s);
+//	return 1;
+//}
+//int main() {
+//	StackType expr;
+//	init_stack(&expr);
+//	push(&expr, '{');
+//	push(&expr, ' ');
+//	push(&expr, 'A');
+//	push(&expr, '[');
+//	push(&expr, '(');
+//	push(&expr, 'i');
+//	push(&expr, '+');
+//	push(&expr, '1');
+//	push(&expr, ')');
+//	push(&expr, ']');
+//	push(&expr, '=');
+//	push(&expr, '0');
+//	push(&expr, ';');
+//	push(&expr, ' ');
+//	push(&expr, '}');
+//	push(&expr, '\0');
+//
+//	if (check_matching(expr.data) == 1) {
+//		printf("%s 괄호 검사 성공\n", expr.data);
+//	}
+//	else {
+//		printf("%s 괄호 검사 실패\n", expr.data);
+//	}
+//	delete1(&expr);
+//	return 0;
+//}
 
 //#include <stdio.h>
 //#include <stdlib.h>
