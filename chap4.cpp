@@ -1,14 +1,10 @@
+// 14번 부터
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define MAX_STACK_SIZE 100
-#define MAZE_SIZE 10
-// git 테스트용 문장
-typedef struct elementTag {
-	short r;
-	short c;
-}element;
 
+typedef int element;
 typedef struct StackTypeTag {
 	element* data;
 	int capacity;
@@ -62,65 +58,331 @@ element peek(StackType* s) {
 	}
 	return s->data[s->top];
 }
-
-element here = { 1,0 }, entry = { 1,0 };
-
-char maze[MAZE_SIZE][MAZE_SIZE] = {
-	{'1','1','1','1','1','1','1','1','1','1'},
-	{'e','0','0','0','1','0','0','0','0','1'},
-	{'1','0','0','0','1','0','0','0','0','1'},
-	{'1','0','1','1','1','0','0','1','0','1'},
-	{'1','0','0','0','1','0','0','1','0','1'},
-	{'1','0','1','0','1','0','0','1','0','1'},
-	{'1','0','1','0','1','0','0','1','0','1'},
-	{'1','0','1','0','1','0','0','1','0','1'},
-	{'1','0','1','0','0','0','0','1','0','x'},
-	{'1','1','1','1','1','1','1','1','1','1'}
-};
-void push_loc(StackType* s, int r, int c) {
-	if (r < 0 || c < 0) return;
-	if (maze[r][c] != '1' && maze[r][c] != '.') {
-		element tmp;
-		tmp.r = r;
-		tmp.c = c;
-		push(s, tmp);
+int get_size(StackType* s) {
+	int count = 0;
+	while (!is_empty(s)) {
+		pop(s);
+		count++;
 	}
+	return count;
 }
-void maze_print(char maze[MAZE_SIZE][MAZE_SIZE]) {
-	printf("\n");
-	for (int r = 0; r < MAZE_SIZE; r++) {
-		for (int c = 0; c < MAZE_SIZE; c++) {
-			printf("%c", maze[r][c]);
-		}
-		printf("\n");
-	}
-}
-
 int main() {
-	int r, c;
 	StackType s;
-
 	init_stack(&s);
-	here = entry;
-	while (maze[here.r][here.c] != 'x') {
-		r = here.r;
-		c = here.c;
-		maze[r][c] = '.';
-		maze_print(maze);
-		push_loc(&s, r - 1, c);
-		push_loc(&s, r + 1, c);
-		push_loc(&s, r, c - 1);
-		push_loc(&s, r, c + 1);
-		if (is_empty(&s)) {
-			printf("실패\n");
-			return 1;
-		}
-		else
-			here = pop(&s);
-	}
-	printf("성공\n");
+	int size = get_size(&s);
+	printf("%d\n", size);
 	return 0;
 }
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#define MAX_STACK_SIZE 100
+//#define MAZE_SIZE 10
+//
+//typedef struct elementTag {
+//	char ch;
+//	int num;
+//}element;
+//typedef struct StackTypeTag {
+//	element* data;
+//	int capacity;
+//	int top;
+//}StackType;
+//
+//void init_stack(StackType* s) {
+//	s->top = -1;
+//	s->capacity = 1;
+//	s->data = (element*)malloc(s->capacity * sizeof(element));
+//	if (s->data == NULL) {
+//		fprintf(stderr, "error!\n");
+//		exit(1);
+//	}
+//}
+//void delete1(StackType* s) {
+//	free(s->data);
+//}
+//int is_empty(StackType* s) {
+//	return (s->top == -1);
+//}
+//int is_full(StackType* s) {
+//	return (s->top == (s->capacity) - 1);
+//}
+//void push(StackType* s, element item) {
+//	if (is_full(s)) {
+//		s->capacity *= 2;
+//		element* temp = (element*)realloc(s->data, s->capacity * sizeof(element));
+//		if (temp == NULL) {
+//			fprintf(stderr, "error!");
+//			delete1(s);
+//			exit(1);
+//		}
+//		s->data = temp;
+//	}
+//	s->data[++(s->top)] = item;
+//}
+//element pop(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[(s->top)--];
+//}
+//element peek(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[s->top];
+//}
+//void check_matching(const char* exp) {
+//	StackType s;
+//	init_stack(&s);
+//	int num = 1;
+//	size_t len = strlen(exp);
+//	for (int i = 0; i < len; i++) {
+//		switch (exp[i]) {
+//		case '(': {
+//			element elm = { exp[i], num };
+//			push(&s, elm);
+//			printf("%d ", num);
+//			num++;
+//			break;
+//		}
+//		case ')': {
+//			element elm2 = pop(&s);
+//			printf("%d ", elm2.num);
+//			break;
+//		}
+//		}
+//	}
+//	delete1(&s);
+//}
+//
+//int main(){
+//	const char* str = "((())(()))";
+//	check_matching(str);
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#define MAX_STACK_SIZE 100
+//#define MAZE_SIZE 10
+//
+//typedef int element;
+//typedef struct StackTypeTag {
+//	element* data;
+//	int capacity;
+//	int top;
+//}StackType;
+//
+//void init_stack(StackType* s) {
+//	s->top = -1;
+//	printf("정수 배열의 크기: ");
+//	scanf_s("%d", &(s->capacity));
+//	s->data = (element*)malloc(s->capacity * sizeof(element));
+//	if (s->data == NULL) {
+//		fprintf(stderr, "error!\n");
+//		exit(1);
+//	}
+//}
+////void init_stack(StackType* s) {
+////	s->top = -1;
+////	s->capacity = 1;
+////	s->data = (element*)malloc(s->capacity * sizeof(element));
+////	if (s->data == NULL) {
+////		fprintf(stderr, "error!\n");
+////		exit(1);
+////	}
+////}
+//void delete1(StackType* s) {
+//	free(s->data);
+//}
+//int is_empty(StackType* s) {
+//	return (s->top == -1);
+//}
+//int is_full(StackType* s) {
+//	return (s->top == (s->capacity) - 1);
+//}
+//void push(StackType* s, element item) {
+//	if (is_full(s)) {
+//		s->capacity *= 2;
+//		element* temp = (element*)realloc(s->data, s->capacity * sizeof(element));
+//		if (temp == NULL) {
+//			fprintf(stderr, "error!");
+//			delete1(s);
+//			exit(1);
+//		}
+//		s->data = temp;
+//	}
+//	s->data[++(s->top)] = item;
+//}
+//element pop(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[(s->top)--];
+//}
+//element peek(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[s->top];
+//}
+//void scan_push(StackType *s) {
+//	int n;
+//	printf("정수를 입력하시오: ");
+//	while(!is_full(s)){
+//		scanf_s("%d", &n);
+//		push(s, n);
+//	}
+//}
+//void print_stack(StackType* s) {
+//	printf("반전된 정수 배열: ");
+//	while (!is_empty(s)) {
+//		printf("%d ", pop(s));
+//	}
+//}
+//int main() {
+//	StackType s;
+//	init_stack(&s);
+//	scan_push(&s);
+//	print_stack(&s);
+//	delete1(&s);
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//#define MAX_STACK_SIZE 100
+//#define MAZE_SIZE 10
+//
+//typedef struct elementTag {
+//	short r;
+//	short c;
+//}element;
+//
+//typedef struct StackTypeTag {
+//	element* data;
+//	int capacity;
+//	int top;
+//}StackType;
+//
+//void init_stack(StackType* s) {
+//	s->top = -1;
+//	s->capacity = 1;
+//	s->data = (element*)malloc(s->capacity * sizeof(element));
+//	if (s->data == NULL) {
+//		fprintf(stderr, "error!\n");
+//		exit(1);
+//	}
+//}
+//void delete1(StackType* s) {
+//	free(s->data);
+//}
+//int is_empty(StackType* s) {
+//	return (s->top == -1);
+//}
+//int is_full(StackType* s) {
+//	return (s->top == (s->capacity) - 1);
+//}
+//void push(StackType* s, element item) {
+//	if (is_full(s)) {
+//		s->capacity *= 2;
+//		element* temp = (element*)realloc(s->data, s->capacity * sizeof(element));
+//		if (temp == NULL) {
+//			fprintf(stderr, "error!");
+//			delete1(s);
+//			exit(1);
+//		}
+//		s->data = temp;
+//	}
+//	s->data[++(s->top)] = item;
+//}
+//element pop(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[(s->top)--];
+//}
+//element peek(StackType* s) {
+//	if (is_empty(s)) {
+//		fprintf(stderr, "error!");
+//		delete1(s);
+//		exit(1);
+//	}
+//	return s->data[s->top];
+//}
+//
+//element here = { 1,0 }, entry = { 1,0 };
+//
+//char maze[MAZE_SIZE][MAZE_SIZE] = {
+//	{'1','1','1','1','1','1','1','1','1','1'},
+//	{'e','0','0','0','1','0','0','0','0','1'},
+//	{'1','0','0','0','1','0','0','0','0','1'},
+//	{'1','0','1','1','1','0','0','1','0','1'},
+//	{'1','0','0','0','1','0','0','1','0','1'},
+//	{'1','0','1','0','1','0','0','1','0','1'},
+//	{'1','0','1','0','1','0','0','1','0','1'},
+//	{'1','0','1','0','1','0','0','1','0','1'},
+//	{'1','0','1','0','0','0','0','1','0','x'},
+//	{'1','1','1','1','1','1','1','1','1','1'}
+//};
+//void push_loc(StackType* s, int r, int c) {
+//	if (r < 0 || c < 0) return;
+//	if (maze[r][c] != '1' && maze[r][c] != '.') {
+//		element tmp;
+//		tmp.r = r;
+//		tmp.c = c;
+//		push(s, tmp);
+//	}
+//}
+//void maze_print(char maze[MAZE_SIZE][MAZE_SIZE]) {
+//	printf("\n");
+//	for (int r = 0; r < MAZE_SIZE; r++) {
+//		for (int c = 0; c < MAZE_SIZE; c++) {
+//			printf("%c", maze[r][c]);
+//		}
+//		printf("\n");
+//	}
+//}
+//
+//int main() {
+//	int r, c;
+//	StackType s;
+//
+//	init_stack(&s);
+//	here = entry;
+//	while (maze[here.r][here.c] != 'x') {
+//		r = here.r;
+//		c = here.c;
+//		maze[r][c] = '.';
+//		maze_print(maze);
+//		push_loc(&s, r - 1, c);
+//		push_loc(&s, r + 1, c);
+//		push_loc(&s, r, c - 1);
+//		push_loc(&s, r, c + 1);
+//		if (is_empty(&s)) {
+//			printf("실패\n");
+//			return 1;
+//		}
+//		else
+//			here = pop(&s);
+//	}
+//	printf("성공\n");
+//	return 0;
+//}
 
 //#include <stdio.h>
 //#include <stdlib.h>
