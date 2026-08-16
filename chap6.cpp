@@ -5,15 +5,18 @@ typedef struct ListNodeTag {
 	element data;
 	ListNodeTag *link;
 }ListNode;
+
 ListNode *ins_first(ListNode *head, element item) {
 	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+	if (p == NULL) return head;
 	p->data = item;
 	p->link = head;
 	head = p;
 	return head;
 }
-ListNode *ins(ListNode *head, ListNode *pre, element item) { // head가 왜 인자로 있고 반환값으로 head를 주는 이유를 모르겠다...
+ListNode *ins(ListNode *head, ListNode *pre, element item) {
 	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+	if (p == NULL) return head;
 	p->data = item;
 	p->link = pre->link;
 	pre->link = p;
@@ -34,6 +37,25 @@ ListNode *del(ListNode *head, ListNode *pre) {
 	pre->link = p->link;
 	free(p);
 	return head;
+}
+element get_entry(ListNode *head, int index) {
+	ListNode *p;
+	if (index < 0 || head == NULL) return -1;
+	p = head;
+	for (int i = 0; i < index; i++) {
+		if (p->link == NULL) return -1;
+		p = p->link;
+	}
+	return p->data;
+}
+int get_length(ListNode *head) {
+	int len = 0;
+	ListNode *p = head;
+	while (p != NULL) {
+		len++;
+		p = p->link;
+	}
+	return len;
 }
 void print_list(ListNode *head) {
 	ListNode *p = head;
@@ -56,6 +78,68 @@ int main() {
 	}
 	return 0;
 }
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//typedef int element;
+//typedef struct ListNodeTag {
+//	element data;
+//	ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) { 
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) { 
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+//void print_list(ListNode *head) {
+//	ListNode *p = head;
+//	while (p != NULL) {
+//		printf("%d->", p->data);
+//		p = p->link;
+//	}
+//	printf("NULL \n");
+//}
+//
+//int main() {
+//	ListNode *head = NULL;
+//	for (int i = 0; i < 5; i++) {
+//		head = ins_first(head, i);
+//		print_list(head);
+//	}
+//	for (int i = 0; i < 5; i++) {
+//		head = del_first(head);
+//		print_list(head);
+//	}
+//	return 0;
+//}
 
 //#include <stdio.h>
 //#include <stdlib.h>
