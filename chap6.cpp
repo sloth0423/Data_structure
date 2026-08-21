@@ -1,141 +1,589 @@
+// 미완성
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
 typedef int element;
 typedef struct ListNodeTag {
 	element data;
-	ListNodeTag *link;
+	struct ListNodeTag *link;
 }ListNode;
-
-ListNode *ins_first(ListNode *head, element item) {
+typedef struct ListTypeTag {
+	int size;
+	ListNode *head;
+	ListNode *tail;
+}ListType;
+void add(ListType *list, element item) {
+	if (list == NULL) return;
 	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
-	if (p == NULL) return head;
+	ListNode *q;
+	if (p == NULL) {
+		fprintf(stderr, "alloc error!");
+		exit(1);
+	}
 	p->data = item;
-	p->link = head;
-	head = p;
-	return head;
-}
-ListNode *ins(ListNode *head, ListNode *pre, element item) {
-	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
-	if (p == NULL) return head;
-	p->data = item;
-	p->link = pre->link;
-	pre->link = p;
-	return head;
-}
-ListNode *del_first(ListNode *head) {
-	ListNode *p;
-	if (head == NULL) return NULL;
-	p = head;
-	head = head->link;
-	free(p);
-	return head;
-}
-ListNode *del(ListNode *head, ListNode *pre) {
-	ListNode *p;
-	if (pre->link == NULL) return head;
-	p = pre->link;
-	pre->link = p->link;
-	free(p);
-	return head;
-}
-element get_entry(ListNode *head, int index) {
-	ListNode *p;
-	if (index < 0 || head == NULL) return -1;
-	p = head;
-	for (int i = 0; i < index; i++) {
-		if (p->link == NULL) return -1;
-		p = p->link;
+	if (list->head == NULL) {
+		p->link = NULL;
+		list->head = p;
+		list->tail = p;
+		list->size++;
+		return;
 	}
-	return p->data;
-}
-ListNode *reverse_list(ListNode *head) {
-	if (head == NULL) return NULL;
-	ListNode *p1, *p2, *p3;
-	p1 = head;
-	p2 = NULL;
-	while (p1 != NULL) {
-		p3 = p2;
-		p2 = p1;
-		p1 = p1->link;
-		p2->link = p3;
+	q = list->head;
+	if (q->data >= item) {
+		p->link = q;
+		list->head = p;
+		list->size++;
+		return;
 	}
-	return p2;
-}
-void split(ListNode *C, ListNode **A, ListNode **B) {
-	ListNode *p = C;
-	ListNode *q = NULL;
-	ListNode *r = NULL;
-	ListNode *s = NULL;
-	int num = 1;
-	while (p != NULL) {
-		if(num % 2 == 1){ // 홀수 일 때
-			s = (ListNode *)malloc(sizeof(ListNode));
-			s->data = p->data;
-			s->link = NULL;
-			if (*A == NULL) {
-				*A = s;
-			}
-			else {
-				q->link = s;
-			}
-			q = s;
-		}
-		else { // 짝수 일 때
-			s = (ListNode *)malloc(sizeof(ListNode));
-			s->data = p->data;
-			s->link = NULL;
-			if (*B == NULL) {
-				*B = s;
-			}
-			else {
-				r->link = s;
-			}
-			r = s;
-		}
-		p = p->link;
-		num++;
+	while (q->link != NULL && q->link->data < item) { 
+		q = q->link;
 	}
-}
-
-void print_list(ListNode *head) {
-	if (head == NULL) return;
-	ListNode *p = head;
-	printf("%d", p->data);
-	p = p->link;
-	while (p != NULL) {
-		printf("->");
-		printf("%d", p->data);
-		p = p->link;
+	p->link = q->link;
+	q->link = p;
+	if (p->link == NULL) {
+		list->tail = p;
 	}
-	printf("\n");
+	list->size++;
 }
 
 int main() {
-	ListNode *head1 = NULL;
-	ListNode *head2 = NULL;
-	ListNode *head3 = NULL;
-	head1 = ins_first(head1, 123213);
-	head1 = ins_first(head1, 8);
-	head1 = ins_first(head1, 3);
-	head1 = ins_first(head1, 2);
-	head1 = ins_first(head1, -123123);
-	print_list(head1);
-	split(head1, &head2, &head3);
-	print_list(head2);
-	print_list(head3);
-	while (head1 != NULL) {
-		head1 = del_first(head1);
-	}
-	while (head2 != NULL) {
-		head2 = del_first(head2);
-	}
-	while (head3 != NULL) {
-		head3 = del_first(head3);
-	}
+	
 	return 0;
 }
+//#include <stdio.h>
+//#include <stdlib.h>
+//#define MAX_ARRAY_SIZE 100
+//typedef int element;
+//typedef struct arrayTag{
+//	element data[MAX_ARRAY_SIZE];
+//	int size;
+//}array;
+//
+//void add(array *arr, element item) {
+//	if (arr->size >= MAX_ARRAY_SIZE) {
+//		fprintf(stderr, "리스트가 포화상태입니다.");
+//		exit(1);
+//	}
+//	for (int i = 0; i < arr->size; i++) {
+//		if (arr->data[i] >= item) {
+//			for (int j = arr->size; j > i; j--) {
+//				arr->data[j] = arr->data[j - 1];
+//			}
+//			arr->data[i] = item;
+//			arr->size++;
+//			return;
+//		}
+//	}
+//	arr->data[arr->size++] = item;
+//}
+//void delete_element(array *arr, element item) {
+//	for (int i = 0; i < arr->size; i++) {
+//		if (item == arr->data[i]) {
+//			for (int j = i; j < arr->size - 1; j++) {
+//				arr->data[j] = arr->data[j + 1];
+//			}
+//			arr->size--;
+//			return;
+//		}
+//	}
+//}
+//void clear(array *arr) { // clear함수이자 초기화 함수
+//	if (arr == NULL) return;
+//	arr->size = 0;
+//}
+//void is_in_list(array *arr, element item) {
+//	//is_in_list(list, item)연산은 인자로 받는 list가 정렬되어 있기 때문에
+//	// 이진 탐색을 이용하면 시간 복잡도를 O(log n)으로 줄일 수 있으나 
+//	// 이진 탐색은 chap13에서 다루는 것 같아 일단은 선형 탐색으로 구현하였다.
+//	for (int i = 0; i < arr->size; i++) {
+//		if (item == arr->data[i]) {
+//			printf("리스트 안에 %d가 있습니다.\n", item);
+//			return;
+//		}
+//	}
+//	printf("리스트 안에 %d가 없습니다.\n", item);
+//}
+//int get_length(array *arr) {
+//	return arr->size;
+//}
+//void is_empty(array *arr) {
+//	if (arr->size == 0) {
+//		printf("리스트가 공백상태입니다.\n");
+//	}
+//	else {
+//		printf("리스트가 공백상태가 아닙니다.\n");
+//	}
+//}
+//void is_full(array *arr) {
+//	if (arr->size == MAX_ARRAY_SIZE) {
+//		printf("리스트가 포화상태입니다.\n");
+//	}
+//	else {
+//		printf("리스트가 포화상태가 아닙니다.\n");
+//	}
+//}
+//void display(array *arr) {
+//	for (int i = 0; i < arr->size; i++) {
+//		printf("%d ", arr->data[i]);
+//	}
+//	printf("\n");
+//}
+//int main() {
+//	array arr = {};
+//	clear(&arr);
+//	add(&arr, 1);
+//	display(&arr);
+//	add(&arr, 2);
+//	display(&arr);
+//	add(&arr, 3);
+//	display(&arr);
+//	add(&arr, 5);
+//	display(&arr);
+//	add(&arr, 6);
+//	display(&arr);
+//	add(&arr, 7);
+//	display(&arr);
+//	add(&arr, 4);
+//	display(&arr);
+//	delete_element(&arr, 4);
+//	display(&arr);
+//	is_in_list(&arr, 4);
+//	is_in_list(&arr, 5);
+//	printf("이 리스트의 길이는 %d입니다.\n", get_length(&arr));
+//	is_empty(&arr);
+//	is_full(&arr);
+//	clear(&arr);
+//	display(&arr);
+//	is_empty(&arr);
+//	return 0;
+//}
+//#include <stdio.h>
+//#include <stdlib.h>
+//
+//typedef struct elementTag {
+//	int coef;
+//	int expon;
+//}element;
+//typedef struct ListNodeTag {
+//	element data;
+//	struct ListNodeTag *link;
+//}ListNode;
+//typedef struct ListTypeTag {
+//	int size;
+//	ListNode *head;
+//	ListNode *tail;
+//}ListType;
+//
+//void error(const char *message) {
+//	fprintf(stderr, "%s\n", message);
+//	exit(1);
+//}
+//ListType *create_list() {
+//	ListType *list = (ListType *)malloc(sizeof(ListType));
+//	if (list == NULL) error("메모리 할당 오류");
+//	list->size = 0;
+//	list->head = NULL;
+//	list->tail = NULL;
+//	return list;
+//}
+//void ins_last(ListType *list, element *item) {
+//	ListNode *node = (ListNode *)malloc(sizeof(ListNode));
+//	if (node == NULL) error("메모리 할당 오류");
+//	node->data.coef = item->coef;
+//	node->data.expon = item->expon;
+//	node->link = NULL;
+//	if (list->tail == NULL) {
+//		list->head = node;
+//		list->tail = node;
+//	}
+//	else {
+//		list->tail->link = node;
+//		list->tail = node;
+//	}
+//	list->size++;
+//}
+//void free_list(ListType *list) {
+//	if (list == NULL) return;
+//	ListNode *p = list->head;
+//	while (p != NULL) {
+//		ListNode *next = p->link;
+//		free(p);
+//		p = next;
+//	}
+//	free(list);
+//}
+//void add_poly(ListType *a, ListType *b, ListType *c) {
+//	element item;
+//	if (a == NULL || b == NULL || c == NULL) error("error!");
+//	ListNode *p = a->head;
+//	ListNode *q = b->head;
+//	while (p != NULL && q != NULL) {
+//		if (p->data.expon == q->data.expon) {
+//			item.coef = p->data.coef + q->data.coef;
+//			if (item.coef == 0) {
+//				p = p->link;
+//				q = q->link;
+//				continue;
+//			}
+//			item.expon = p->data.expon;
+//			ins_last(c, &item);
+//			p = p->link;
+//			q = q->link;
+//		}
+//		else if (p->data.expon < q->data.expon) {
+//			item.coef = q->data.coef;
+//			item.expon = q->data.expon;
+//			ins_last(c, &item);
+//			q = q->link;
+//		}
+//		else {
+//			item.coef = p->data.coef;
+//			item.expon = p->data.expon;
+//			ins_last(c, &item);
+//			p = p->link;
+//		}
+//	}
+//	while (p != NULL) {
+//		item.coef = p->data.coef;
+//		item.expon = p->data.expon;
+//		ins_last(c, &item);
+//		p = p->link;
+//	}
+//	while (q != NULL) {
+//		item.coef = q->data.coef;
+//		item.expon = q->data.expon;
+//		ins_last(c, &item);
+//		q = q->link;
+//	}
+//}
+//int poly_eval(ListType *poly, int var) {
+//	if (poly->head == NULL) return -1;
+//	ListNode *p = poly->head;
+//	int rslt = 0;
+//	while (p != NULL) {
+//		int tmp = 1;
+//		for (int i = 0; i < p->data.expon; i++)
+//			tmp *= var;
+//		tmp *= p->data.coef;
+//		rslt += tmp;
+//		p = p->link;
+//	}
+//	return rslt;
+//}
+//void poly_print(ListType *a) {
+//	if (a == NULL) error("parameter error");
+//	ListNode *p = a->head;
+//	printf("%dx^%d", p->data.coef, p->data.expon);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf(" + ");
+//		printf("%dx^%d", p->data.coef, p->data.expon);
+//		p = p->link;
+//	}
+//	printf("\n");
+//}
+//
+//int main() {
+//	ListType *a;
+//	a = create_list();
+//	element item = { 1, 3 };
+//	ins_last(a, &item);
+//	item = { 2, 1 };
+//	ins_last(a, &item);
+//	item = { 6, 0 };
+//	ins_last(a, &item);
+//	poly_print(a);
+//	printf("%d\n", poly_eval(a, 2));
+//
+//	free_list(a);
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//
+//typedef struct elementTag {
+//	int coef;
+//	int expon;
+//}element;
+//typedef struct ListNodeTag {
+//	element data;
+//	struct ListNodeTag *link;
+//}ListNode;
+//typedef struct ListTypeTag {
+//	int size;
+//	ListNode *head;
+//	ListNode *tail;
+//}ListType;
+//
+//void error(const char *message) {
+//	fprintf(stderr, "%s\n", message);
+//	exit(1);
+//}
+//ListType *create_list() {
+//	ListType *list = (ListType *)malloc(sizeof(ListType));
+//	if (list == NULL) error("메모리 할당 오류");
+//	list->size = 0;
+//	list->head = NULL;
+//	list->tail = NULL;
+//	return list;
+//}
+//void ins_last(ListType *list, element *item) {
+//	ListNode *node = (ListNode *)malloc(sizeof(ListNode));
+//	if (node == NULL) error("메모리 할당 오류");
+//	node->data.coef = item->coef;
+//	node->data.expon = item->expon;
+//	node->link = NULL;
+//	if (list->tail == NULL) {
+//		list->head = node;
+//		list->tail = node;
+//	}
+//	else {
+//		list->tail->link = node;
+//		list->tail = node;
+//	}
+//	list->size++;
+//}
+//void free_list(ListType *list) {
+//	if (list == NULL) return;
+//	ListNode *p = list->head;
+//	while (p != NULL) {
+//		ListNode *next = p->link;
+//		free(p);
+//		p = next;
+//	}
+//	free(list);
+//}
+//void add_poly(ListType *a, ListType *b, ListType *c) {
+//	element item;
+//	if (a == NULL || b == NULL || c == NULL) error("error!");
+//	ListNode *p = a->head;
+//	ListNode *q = b->head;
+//	while (p != NULL && q != NULL) {
+//		if (p->data.expon == q->data.expon) {
+//			item.coef = p->data.coef + q->data.coef;
+//			if (item.coef == 0) {
+//				p = p->link;
+//				q = q->link;
+//				continue;
+//			}
+//			item.expon = p->data.expon;
+//			ins_last(c, &item);
+//			p = p->link;
+//			q = q->link;
+//		}
+//		else if (p->data.expon < q->data.expon) {
+//			item.coef = q->data.coef;
+//			item.expon = q->data.expon;
+//			ins_last(c, &item);
+//			q = q->link;
+//		}
+//		else {
+//			item.coef = p->data.coef;
+//			item.expon = p->data.expon;
+//			ins_last(c, &item);
+//			p = p->link;
+//		}
+//	}
+//	while (p != NULL) {
+//		item.coef = p->data.coef;
+//		item.expon = p->data.expon;
+//		ins_last(c, &item);
+//		p = p->link;
+//	}
+//	while (q != NULL) {
+//		item.coef = q->data.coef;
+//		item.expon = q->data.expon;
+//		ins_last(c, &item);
+//		q = q->link;
+//	}
+//}
+//void poly_print(ListType *a) {
+//	if (a == NULL) error("parameter error");
+//	ListNode *p = a->head;
+//	printf("%dx^%d", p->data.coef, p->data.expon);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf(" + ");
+//		printf("%dx^%d", p->data.coef, p->data.expon);
+//		p = p->link;
+//	}
+//	printf("\n");
+//}
+//
+//int main() {
+//	ListType *a;
+//	ListType *b;
+//	ListType *c;
+//	a = create_list();
+//	b = create_list();
+//	c = create_list();
+//	element item = { 3, 6 };
+//	ins_last(a, &item);
+//	item = { 7, 3 };
+//	ins_last(a, &item);
+//	item = { -2, 2 };
+//	ins_last(a, &item);
+//	item = { -9, 0 };
+//	ins_last(a, &item);
+//	item = { -2, 6 };
+//	ins_last(b, &item);
+//	item = { -4, 4 };
+//	ins_last(b, &item);
+//	item = { 6, 2 };
+//	ins_last(b, &item);
+//	item = { 6, 1 };
+//	ins_last(b, &item);
+//	item = { 1, 0 };
+//	ins_last(b, &item);
+//	add_poly(a, b, c);
+//	poly_print(a);
+//	poly_print(b);
+//	poly_print(c);
+//
+//	free_list(a);
+//	free_list(b);
+//	free_list(c);
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef int element;
+//typedef struct ListNodeTag {
+//	element data;
+//	ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+//element get_entry(ListNode *head, int index) {
+//	ListNode *p;
+//	if (index < 0 || head == NULL) return -1;
+//	p = head;
+//	for (int i = 0; i < index; i++) {
+//		if (p->link == NULL) return -1;
+//		p = p->link;
+//	}
+//	return p->data;
+//}
+//ListNode *reverse_list(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p1, *p2, *p3;
+//	p1 = head;
+//	p2 = NULL;
+//	while (p1 != NULL) {
+//		p3 = p2;
+//		p2 = p1;
+//		p1 = p1->link;
+//		p2->link = p3;
+//	}
+//	return p2;
+//}
+//void split(ListNode *C, ListNode **A, ListNode **B) {
+//	ListNode *p = C;
+//	ListNode *q = NULL;
+//	ListNode *r = NULL;
+//	ListNode *s = NULL;
+//	int num = 1;
+//	while (p != NULL) {
+//		if(num % 2 == 1){ // 홀수 일 때
+//			s = (ListNode *)malloc(sizeof(ListNode));
+//			s->data = p->data;
+//			s->link = NULL;
+//			if (*A == NULL) {
+//				*A = s;
+//			}
+//			else {
+//				q->link = s;
+//			}
+//			q = s;
+//		}
+//		else { // 짝수 일 때
+//			s = (ListNode *)malloc(sizeof(ListNode));
+//			s->data = p->data;
+//			s->link = NULL;
+//			if (*B == NULL) {
+//				*B = s;
+//			}
+//			else {
+//				r->link = s;
+//			}
+//			r = s;
+//		}
+//		p = p->link;
+//		num++;
+//	}
+//}
+//
+//void print_list(ListNode *head) {
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	printf("%d", p->data);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf("->");
+//		printf("%d", p->data);
+//		p = p->link;
+//	}
+//	printf("\n");
+//}
+//
+//int main() {
+//	ListNode *head1 = NULL;
+//	ListNode *head2 = NULL;
+//	ListNode *head3 = NULL;
+//	head1 = ins_first(head1, 123213);
+//	head1 = ins_first(head1, 8);
+//	head1 = ins_first(head1, 3);
+//	head1 = ins_first(head1, 2);
+//	head1 = ins_first(head1, -123123);
+//	print_list(head1);
+//	split(head1, &head2, &head3);
+//	print_list(head2);
+//	print_list(head3);
+//	while (head1 != NULL) {
+//		head1 = del_first(head1);
+//	}
+//	while (head2 != NULL) {
+//		head2 = del_first(head2);
+//	}
+//	while (head3 != NULL) {
+//		head3 = del_first(head3);
+//	}
+//	return 0;
+//}
 
 //#include <stdio.h>
 //#include <stdlib.h>
