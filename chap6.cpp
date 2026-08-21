@@ -50,44 +50,6 @@ element get_entry(ListNode *head, int index) {
 	}
 	return p->data;
 }
-int get_length(ListNode *head) {
-	int len = 0;
-	ListNode *p = head;
-	while (p != NULL) {
-		len++;
-		p = p->link;
-	}
-	return len;
-}
-int get_sum(ListNode *head) {
-	int sum = 0;
-	ListNode *p = head;
-	while (p != NULL) {
-		sum += p->data;
-		p = p->link;
-	}
-	return sum;
-}
-ListNode *search_element(ListNode *head, element item) {
-	ListNode *p;
-	if (head == NULL) return NULL;
-	p = head;
-	while (p != NULL) {
-		if (p->data == item) return p;
-		p = p->link;
-	}
-	return NULL;
-}
-ListNode *concat_list(ListNode *head1, ListNode *head2) {
-	if (head1 == NULL) return head2;
-	if (head2 == NULL) return head1;
-	ListNode *p = head1;
-	while (p->link != NULL) {
-		p = p->link;
-	}
-	p->link = head2;
-	return head1;
-}
 ListNode *reverse_list(ListNode *head) {
 	if (head == NULL) return NULL;
 	ListNode *p1, *p2, *p3;
@@ -101,6 +63,42 @@ ListNode *reverse_list(ListNode *head) {
 	}
 	return p2;
 }
+void split(ListNode *C, ListNode **A, ListNode **B) {
+	ListNode *p = C;
+	ListNode *q = NULL;
+	ListNode *r = NULL;
+	ListNode *s = NULL;
+	int num = 1;
+	while (p != NULL) {
+		if(num % 2 == 1){ // 홀수 일 때
+			s = (ListNode *)malloc(sizeof(ListNode));
+			s->data = p->data;
+			s->link = NULL;
+			if (*A == NULL) {
+				*A = s;
+			}
+			else {
+				q->link = s;
+			}
+			q = s;
+		}
+		else { // 짝수 일 때
+			s = (ListNode *)malloc(sizeof(ListNode));
+			s->data = p->data;
+			s->link = NULL;
+			if (*B == NULL) {
+				*B = s;
+			}
+			else {
+				r->link = s;
+			}
+			r = s;
+		}
+		p = p->link;
+		num++;
+	}
+}
+
 void print_list(ListNode *head) {
 	if (head == NULL) return;
 	ListNode *p = head;
@@ -111,31 +109,1016 @@ void print_list(ListNode *head) {
 		printf("%d", p->data);
 		p = p->link;
 	}
-}
-ListNode *create_list(ListNode *head) {
-	ListNode *p = head;
-	int num1 = 0;
-	element num2 = 0;
-	printf("노드의 개수: ");
-	scanf_s("%d", &num1);
-	for (int i = 1; i <= num1; i++) {
-		printf("노드 #%d 데이터: ", i);
-		scanf_s("%d", &num2);
-		head = ins_first(head, num2);
-	}
-	printf("연결 리스트의 데이터 합: %d", get_sum(head));
 	printf("\n");
-	return head;
 }
 
 int main() {
 	ListNode *head1 = NULL;
-	head1 = create_list(head1);
+	ListNode *head2 = NULL;
+	ListNode *head3 = NULL;
+	head1 = ins_first(head1, 123213);
+	head1 = ins_first(head1, 8);
+	head1 = ins_first(head1, 3);
+	head1 = ins_first(head1, 2);
+	head1 = ins_first(head1, -123123);
+	print_list(head1);
+	split(head1, &head2, &head3);
+	print_list(head2);
+	print_list(head3);
 	while (head1 != NULL) {
 		head1 = del_first(head1);
 	}
+	while (head2 != NULL) {
+		head2 = del_first(head2);
+	}
+	while (head3 != NULL) {
+		head3 = del_first(head3);
+	}
 	return 0;
 }
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef int element;
+//typedef struct ListNodeTag {
+//	element data;
+//	ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+//element get_entry(ListNode *head, int index) {
+//	ListNode *p;
+//	if (index < 0 || head == NULL) return -1;
+//	p = head;
+//	for (int i = 0; i < index; i++) {
+//		if (p->link == NULL) return -1;
+//		p = p->link;
+//	}
+//	return p->data;
+//}
+//ListNode *reverse_list(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p1, *p2, *p3;
+//	p1 = head;
+//	p2 = NULL;
+//	while (p1 != NULL) {
+//		p3 = p2;
+//		p2 = p1;
+//		p1 = p1->link;
+//		p2->link = p3;
+//	}
+//	return p2;
+//}
+//ListNode *merge(ListNode *head1, ListNode *head2) {
+//	if (head1 == NULL) return head2;
+//	if (head2 == NULL) return head1;
+//
+//	ListNode *head3 = NULL;
+//	ListNode *p = head1;
+//	ListNode *q = head2;
+//	ListNode *r = NULL;
+//	while (p != NULL && q != NULL) {
+//		if (p->data > q->data) {
+//			if (q != NULL) {
+//				if (head3 == NULL) {
+//					head3 = q;
+//					r = q;
+//				}
+//				else {
+//					r->link = q;
+//					r = q;
+//				}
+//				q = q->link;
+//			}
+//		}
+//		else if (p->data <= q->data) {
+//			if (p != NULL) {
+//				if (head3 == NULL) {
+//					head3 = p;
+//					r = p;
+//				}
+//				else {
+//					r->link = p;
+//					r = p;
+//				}
+//				p = p->link;
+//			}
+//		}
+//	}
+//	if (p != NULL) r->link = p;
+//	else if (q != NULL) r->link = q;
+//	return head3;
+//}
+//
+//void print_list(ListNode *head) {
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	printf("%d", p->data);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf("->");
+//		printf("%d", p->data);
+//		p = p->link;
+//	}
+//	printf("\n");
+//}
+//
+//int main() {
+//	ListNode *head1 = NULL;
+//	ListNode *head2 = NULL;
+//	ListNode *head3 = NULL;
+//	head1 = ins_first(head1, 123213);
+//	head1 = ins_first(head1, 8);
+//	head1 = ins_first(head1, 3);
+//	head1 = ins_first(head1, 2);
+//	head1 = ins_first(head1, -123123);
+//	print_list(head1);
+//	head2 = ins_first(head2, 488);
+//	head2 = ins_first(head2, 122);
+//	head2 = ins_first(head2, 114);
+//	print_list(head2);
+//	head3 = merge(head1, head2);
+//	print_list(head3);
+//	while (head3 != NULL) {
+//		head3 = del_first(head3);
+//	}
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef int element;
+//typedef struct ListNodeTag {
+//	element data;
+//	ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+//element get_entry(ListNode *head, int index) {
+//	ListNode *p;
+//	if (index < 0 || head == NULL) return -1;
+//	p = head;
+//	for (int i = 0; i < index; i++) {
+//		if (p->link == NULL) return -1;
+//		p = p->link;
+//	}
+//	return p->data;
+//}
+//ListNode *reverse_list(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p1, *p2, *p3;
+//	p1 = head;
+//	p2 = NULL;
+//	while (p1 != NULL) {
+//		p3 = p2;
+//		p2 = p1;
+//		p1 = p1->link;
+//		p2->link = p3;
+//	}
+//	return p2;
+//}
+//ListNode *alternate(ListNode *head1, ListNode *head2) {
+//	// 17번 문제를 다시 보니 노드들을 새로운 리스트로 옮기는 문제여서 다시 풀어보았다.
+//  // 옮겼다기 보다는 공유하는 것 같긴 하다.
+	//ListNode *head3 = NULL;
+	//ListNode *p = head1;
+	//ListNode *q = head2;
+	//ListNode *r = NULL;
+	//while (p != NULL || q != NULL) {
+	//	if (p != NULL) {
+	//		if (head3 == NULL) {
+	//			head3 = p;
+	//			r = p;
+	//		}
+	//		else {
+	//			r->link = p;
+	//			r = p;
+	//		}
+	//		p = p->link;
+	//	}
+	//	if (q != NULL) {
+	//		if (head3 == NULL) {
+	//			head3 = q;
+	//			r = q;
+	//		}
+	//		else {
+	//			r->link = q;
+	//			r = q;
+	//		}
+	//		q = q->link;
+	//	}
+	//}
+	//return head3;
+//}
+////ListNode *concat_list(ListNode *head1, ListNode *head2) {
+////	if (head1 == NULL) return head2;
+////	if (head2 == NULL) return head1;
+////	ListNode *p = head1;
+////	while (p->link != NULL) {
+////		p = p->link;
+////	}
+////	p->link = head2;
+////	return head1;
+////}
+//void print_list(ListNode *head) {
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	printf("%d", p->data);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf("->");
+//		printf("%d", p->data);
+//		p = p->link;
+//	}
+//	printf("\n");
+//}
+//
+//int main() {
+//	ListNode *head1 = NULL;
+//	ListNode *head2 = NULL;
+//	ListNode *head3 = NULL;
+//	head1 = ins_first(head1, 2);
+//	head1 = ins_first(head1, 123213);
+//	head1 = ins_first(head1, -123123);
+//	head1 = ins_first(head1, 3);
+//	head1 = ins_first(head1, 8);
+//	print_list(head1);
+//	head2 = ins_first(head2, 488);
+//	head2 = ins_first(head2, 122);
+//	head2 = ins_first(head2, 114);
+//	print_list(head2);
+//	head3 = alternate(head1, head2);
+//	print_list(head3);
+//	while (head3 != NULL) {
+//		head3 = del_first(head3);
+//	}
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef int element;
+//typedef struct ListNodeTag {
+//	element data;
+//	ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+//element get_entry(ListNode *head, int index) {
+//	ListNode *p;
+//	if (index < 0 || head == NULL) return -1;
+//	p = head;
+//	for (int i = 0; i < index; i++) {
+//		if (p->link == NULL) return -1;
+//		p = p->link;
+//	}
+//	return p->data;
+//}
+//ListNode *reverse_list(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p1, *p2, *p3;
+//	p1 = head;
+//	p2 = NULL;
+//	while (p1 != NULL) {
+//		p3 = p2;
+//		p2 = p1;
+//		p1 = p1->link;
+//		p2->link = p3;
+//	}
+//	return p2;
+//}
+//ListNode *alternate(ListNode *head1, ListNode *head2) {
+//	ListNode *head3 = NULL;
+//	ListNode *s = NULL;
+//	ListNode *p = head1;
+//	ListNode *q = head2;
+//	while (p != NULL || q != NULL) { 
+//		// 둘 다 NULL이면 바로 head3(NULL)을 리턴한다.
+//		if (p != NULL) {
+//			ListNode *r = (ListNode *)malloc(sizeof(ListNode));
+//			r->data = p->data;
+//			r->link = NULL;
+//			if (head3 == NULL) head3 = r;
+//			else s->link = r;
+//			s = r;
+//			p = p->link;
+//		}
+//		if (q != NULL) {
+//			ListNode *r = (ListNode *)malloc(sizeof(ListNode));
+//			r->data = q->data;
+//			r->link = NULL;
+//			if (head3 == NULL) head3 = r;
+//			else s->link = r;
+//			s = r;
+//			q = q->link;
+//		}
+//	}
+//	return head3;
+//}
+////ListNode *alternate(ListNode *head1, ListNode *head2) { 
+//// 처음에 만든 alternate 함수
+//// 모든 경우에 if-else문을 사용해 코드가 길고 보기 힘들다.
+//// 처음 head를 만들 때도 head3 == NULL을 사용하여 
+//// 조건문 안에서 처리하면 됐는데 생각을 못했다.
+////	if (head1 == NULL && head2 == NULL) return NULL;
+////	ListNode *p = head1;
+////	ListNode *q = head2;
+////	ListNode *head3 = NULL;
+////	ListNode *s = NULL;
+////	ListNode *r = NULL;
+////	// 초기 동작
+////	if (p != NULL && q == NULL) { // p는 NULL이 아닌데 q만 NULL일때
+////		head3 = (ListNode *)malloc(sizeof(ListNode));
+////		head3->data = p->data;
+////		head3->link = NULL;
+////		p = p->link;
+////		s = head3;
+////	}
+////	else if (q != NULL && p == NULL) { // q는 NULL이 아닌데 p만 NULL일때
+////		head3 = (ListNode *)malloc(sizeof(ListNode));
+////		head3->data = q->data;
+////		head3->link = NULL;
+////		q = q->link;
+////		s = head3;
+////	}
+////	else { //둘 다 NULL이 아닐 때
+////		head3 = (ListNode *)malloc(sizeof(ListNode));
+////		head3->data = p->data;
+////		head3->link = NULL;
+////		p = p->link;
+////		s = head3;
+////		r = (ListNode *)malloc(sizeof(ListNode));
+////		r->data = q->data;
+////		r->link = NULL;
+////		s->link = r;
+////		q = q->link;
+////		s = s->link;
+////	}
+////	while (p != NULL && q != NULL) {
+////		r = (ListNode *)malloc(sizeof(ListNode));
+////		r->data = p->data;
+////		r->link = NULL;
+////		s->link = r;
+////		p = p->link;
+////		s = s->link;
+////		r = (ListNode *)malloc(sizeof(ListNode));
+////		r->data = q->data;
+////		r->link = NULL;
+////		s->link = r;
+////		q = q->link;
+////		s = s->link;
+////	}
+////	while (p != NULL) {
+////		r = (ListNode *)malloc(sizeof(ListNode));
+////		r->data = p->data;
+////		r->link = NULL;
+////		s->link = r;
+////		p = p->link;
+////		s = s->link;
+////	}
+////	while (q != NULL) {
+////		r = (ListNode *)malloc(sizeof(ListNode));
+////		r->data = q->data;
+////		r->link = NULL;
+////		s->link = r;
+////		q = q->link;
+////		s = s->link;
+////	}
+////	return head3;
+////}
+//void print_list(ListNode *head) {
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	printf("%d", p->data);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf("->");
+//		printf("%d", p->data);
+//		p = p->link;
+//	}
+//	printf("\n");
+//}
+//int main() {
+//	ListNode *head1 = NULL;
+//	ListNode *head2 = NULL;
+//	ListNode *head3 = NULL;
+//	head1 = ins_first(head1, 2);
+//	head1 = ins_first(head1, 123213);
+//	head1 = ins_first(head1, -123123);
+//	head1 = ins_first(head1, 3);
+//	head1 = ins_first(head1, 8);
+//	print_list(head1);
+//	head2 = ins_first(head2, 488);
+//	head2 = ins_first(head2, 122);
+//	head2 = ins_first(head2, 114);
+//	print_list(head2);
+//	head3 = alternate(head1, head2);
+//	print_list(head3);
+//	while (head1 != NULL) {
+//		head1 = del_first(head1);
+//	}
+//	while (head2 != NULL) {
+//		head2 = del_first(head2);
+//	}
+//	while (head3 != NULL) {
+//		head3 = del_first(head3);
+//	}
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef int element;
+//typedef struct ListNodeTag {
+//	element data;
+//	ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+//element get_entry(ListNode *head, int index) {
+//	ListNode *p;
+//	if (index < 0 || head == NULL) return -1;
+//	p = head;
+//	for (int i = 0; i < index; i++) {
+//		if (p->link == NULL) return -1;
+//		p = p->link;
+//	}
+//	return p->data;
+//}
+//ListNode *reverse_list(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p1, *p2, *p3;
+//	p1 = head;
+//	p2 = NULL;
+//	while (p1 != NULL) {
+//		p3 = p2;
+//		p2 = p1;
+//		p1 = p1->link;
+//		p2->link = p3;
+//	}
+//	return p2;
+//}
+//ListNode *del_even_node(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p = head;
+//	while (p != NULL && p->link != NULL) {
+//		ListNode *q = p->link;
+//		p->link = q->link;
+//		p = p->link;
+//		free(q);
+//	}
+//	return head;
+//}
+//void print_list(ListNode *head) {
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	printf("%d", p->data);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf("->");
+//		printf("%d", p->data);
+//		p = p->link;
+//	}
+//	printf("\n");
+//}
+//int main() {
+//	ListNode *head1 = NULL;
+//
+//	head1 = ins_first(head1, 2);
+//	head1 = ins_first(head1, 123213);
+//	head1 = ins_first(head1, -123123);
+//	head1 = ins_first(head1, 3);
+//	head1 = ins_first(head1, 8);
+//	print_list(head1);
+//	head1 = del_even_node(head1);
+//	print_list(head1);
+//	while (head1 != NULL) {
+//		head1 = del_first(head1);
+//	}
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef int element;
+//typedef struct rsltTag{
+//	int max;
+//	int min;
+//}rslt;
+//typedef struct ListNodeTag {
+//	element data;
+//	ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+//element get_entry(ListNode *head, int index) {
+//	ListNode *p;
+//	if (index < 0 || head == NULL) return -1;
+//	p = head;
+//	for (int i = 0; i < index; i++) {
+//		if (p->link == NULL) return -1;
+//		p = p->link;
+//	}
+//	return p->data;
+//}
+//ListNode *reverse_list(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p1, *p2, *p3;
+//	p1 = head;
+//	p2 = NULL;
+//	while (p1 != NULL) {
+//		p3 = p2;
+//		p2 = p1;
+//		p1 = p1->link;
+//		p2->link = p3;
+//	}
+//	return p2;
+//}
+//int search_max_min(ListNode *head, rslt* rslt) {
+//	if (head == NULL || rslt == NULL) return -1;
+//	rslt->min = head->data;
+//	rslt->max = head->data;
+//	ListNode *p = head->link;
+//	while (p != NULL) {
+//		if (rslt->min > p->data) {
+//			rslt->min = p->data;
+//		}
+//		if (rslt->max < p->data) {
+//			rslt->max = p->data;
+//		}
+//		p = p->link;
+//	}
+//	return 0;
+//}
+//void print_list(ListNode *head) {
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	printf("%d", p->data);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf("->");
+//		printf("%d", p->data);
+//		p = p->link;
+//	}
+//}
+//int main() {
+//	ListNode *head1 = NULL;
+//	rslt rslt1;
+//	head1 = ins_first(head1, 2);
+//	head1 = ins_first(head1, 123213);
+//	head1 = ins_first(head1, -123123);
+//	head1 = ins_first(head1, 3);
+//	head1 = ins_first(head1, 8);
+//	if (search_max_min(head1, &rslt1) == 0) {
+//		printf("연결 리스트의 값들 중 최솟값은 %d이고 최댓값은 %d입니다.\n", rslt1.min, rslt1.max);
+//	}
+//	while (head1 != NULL) {
+//		head1 = del_first(head1);
+//	}
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef struct elementTag {
+//	const char* name;
+//	int age;
+//	float height;
+//}element;
+//typedef struct ListNodeTag {
+//	element data;
+//	struct ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+////element get_entry(ListNode *head, int index) {
+////	ListNode *p;
+////	if (index < 0 || head == NULL) return -1;
+////	p = head;
+////	for (int i = 0; i < index; i++) {
+////		if (p->link == NULL) return -1;
+////		p = p->link;
+////	}
+////	return p->data;
+////}
+//ListNode *reverse_list(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p1, *p2, *p3;
+//	p1 = head;
+//	p2 = NULL;
+//	while (p1 != NULL) {
+//		p3 = p2;
+//		p2 = p1;
+//		p1 = p1->link;
+//		p2->link = p3;
+//	}
+//	return p2;
+//}
+//void print_list(ListNode *head) {
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	printf("%s ", p->data.name);
+//	printf("%d ", p->data.age);
+//	printf("%lf", p->data.height);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf("->");
+//		printf("%s ", p->data.name);
+//		printf("%d ", p->data.age);
+//		printf("%lf", p->data.height);
+//		p = p->link;
+//	}
+//}
+//
+//int main() {
+//	ListNode *head1 = NULL;
+//	element s = {"choi", 30, 1.3};
+//	head1 =ins_first(head1, s);
+//	s = { "lee", 48, 1.4 };
+//	head1 = ins_first(head1, s);
+//	s = { "park", 27, 1.2 };
+//	head1 = ins_first(head1, s);
+//	s = { "kim", 34, 1.7 };
+//	head1 = ins_first(head1, s);
+//	print_list(head1);
+//	while (head1 != NULL) {
+//		head1 = del_first(head1);
+//	}
+//	return 0;
+//}
+
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <string.h>
+//
+//typedef int element;
+//typedef struct ListNodeTag {
+//	element data;
+//	ListNodeTag *link;
+//}ListNode;
+//
+//ListNode *ins_first(ListNode *head, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = head;
+//	head = p;
+//	return head;
+//}
+//ListNode *ins(ListNode *head, ListNode *pre, element item) {
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	if (p == NULL) return head;
+//	p->data = item;
+//	p->link = pre->link;
+//	pre->link = p;
+//	return head;
+//}
+//ListNode *del_first(ListNode *head) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	head = head->link;
+//	free(p);
+//	return head;
+//}
+//ListNode *del(ListNode *head, ListNode *pre) {
+//	ListNode *p;
+//	if (pre->link == NULL) return head;
+//	p = pre->link;
+//	pre->link = p->link;
+//	free(p);
+//	return head;
+//}
+//element get_entry(ListNode *head, int index) {
+//	ListNode *p;
+//	if (index < 0 || head == NULL) return -1;
+//	p = head;
+//	for (int i = 0; i < index; i++) {
+//		if (p->link == NULL) return -1;
+//		p = p->link;
+//	}
+//	return p->data;
+//}
+//int get_length(ListNode *head) {
+//	int len = 0;
+//	ListNode *p = head;
+//	while (p != NULL) {
+//		len++;
+//		p = p->link;
+//	}
+//	return len;
+//}
+//int get_sum(ListNode *head) {
+//	int sum = 0;
+//	if (head == NULL) return -1;
+//	ListNode *p = head;
+//	while (p != NULL) {
+//		sum += p->data;
+//		p = p->link;
+//	}
+//	return sum;
+//}
+//void count_element(ListNode *head) {
+//	int num, count = 0;
+//	printf("탐색할 값을 입력하시오: ");
+//	scanf_s("%d", &num);
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	while (p != NULL) {
+//		if (p->data == num) count++;
+//		p = p->link;
+//	}
+//	printf("%d는 연결 리스트에서 %d번 나타납니다.",num,count);
+//}
+//ListNode *search_element(ListNode *head, element item) {
+//	ListNode *p;
+//	if (head == NULL) return NULL;
+//	p = head;
+//	while (p != NULL) {
+//		if (p->data == item) return p;
+//		p = p->link;
+//	}
+//	return NULL;
+//}
+//ListNode *del_element(ListNode *head, element item) {
+//	if (head == NULL) return NULL;
+//	if (head->data == item) {
+//		ListNode *q;
+//		q = head;
+//		head = head->link;
+//		free(q);
+//		return head;
+//	}
+//	ListNode *p = head;
+//	while (p->link != NULL) {
+//		if (p->link->data == item) {
+//			ListNode *q = p->link;
+//			p->link = q->link;
+//			free(q);
+//			return head;
+//		}
+//		p = p->link;
+//	}
+//	return head;
+//}
+//
+//ListNode *concat_list(ListNode *head1, ListNode *head2) {
+//	if (head1 == NULL) return head2;
+//	if (head2 == NULL) return head1;
+//	ListNode *p = head1;
+//	while (p->link != NULL) {
+//		p = p->link;
+//	}
+//	p->link = head2;
+//	return head1;
+//}
+//ListNode *reverse_list(ListNode *head) {
+//	if (head == NULL) return NULL;
+//	ListNode *p1, *p2, *p3;
+//	p1 = head;
+//	p2 = NULL;
+//	while (p1 != NULL) {
+//		p3 = p2;
+//		p2 = p1;
+//		p1 = p1->link;
+//		p2->link = p3;
+//	}
+//	return p2;
+//}
+//void print_list(ListNode *head) {
+//	if (head == NULL) return;
+//	ListNode *p = head;
+//	printf("%d", p->data);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf("->");
+//		printf("%d", p->data);
+//		p = p->link;
+//	}
+//}
+//ListNode *create_list(ListNode *head) {
+//	ListNode *p = head;
+//	int num1 = 0;
+//	element num2 = 0;
+//	printf("노드의 개수: ");
+//	scanf_s("%d", &num1);
+//	for (int i = 1; i <= num1; i++) {
+//		printf("노드 #%d 데이터: ", i);
+//		scanf_s("%d", &num2);
+//		head = ins_first(head, num2);
+//	}
+//	count_element(head);
+//	printf("\n");
+//	return head;
+//}
+//
+//int main() {
+//	ListNode *head1 = NULL;
+//	head1 = create_list(head1);
+//	printf("%d",get_entry(head1, 3));
+//	while (head1 != NULL) {
+//		head1 = del_first(head1);
+//	}
+//	return 0;
+//}
 
 ///*
 //* 아래의 프로그램?은 다항식 덧셈을 구현한 것이다.
