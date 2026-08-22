@@ -44,11 +44,93 @@ void add(ListType *list, element item) {
 	}
 	list->size++;
 }
+void del_element(ListType *list, element item) {
+	if (list->head == NULL) return;
+	ListNode *p = list->head;
+	ListNode *q = NULL;
 
+	while (p != NULL && p->data != item) {
+		q = p;
+		p = p->link;
+}
+	if (p == NULL) return; // 찾는 값이 없을 때
+	if (p == list->head) {
+		if (list->size == 1) { // 리스트에 단 하나의 노드만 있을 때
+			list->head = NULL;
+			list->tail = NULL;
+			free(p);
+			list->size--;
+			return;
+		}
+		list->head = p->link; // 여러 개의 노드가 있는데 첫 번째 노드를 지울 때
+		free(p);
+		list->size--;
+		return;
+	}
+	q->link = p->link;
+	free(p);
+	list->size--;
+	if (q->link == NULL) {
+		list->tail = q;
+	}
+	return;
+}
 int main() {
 	
 	return 0;
 }
+// 짜느라 정말 오래걸렸는데 이렇게 할 필요가 없던 코드
+// 모든 상황을 if-else문으로 처리하려다 보니
+// 자꾸 꼬이고 코드를 짜기 매우 어려웠다.
+//void del_element(ListType *list, element item) {
+//	if (list->head == NULL) return;
+//	ListNode *p = list->head;
+//	if (p->data == item) { 
+//		if (list->size == 1) { // 리스트에 혼자 남은 거 지우기
+//			free(p);
+//			list->head = NULL;
+//			list->tail = NULL;
+//			list->size--;
+//			return;
+//		}
+//		else{ // 그냥 처음 거 지우기
+//			list->head = p->link;
+//			free(p);
+//			list->size--;
+//			return;
+//		}
+//	}
+//	if (p->link != NULL) p = p->link;
+//	else return;
+//	if (p->data == item) {
+//		list->head->link = p->link;
+//		free(p);
+//		list->size--;
+//		return;
+//	}
+//	while (p->link != NULL) {
+//		if (p->link->data == item) {
+//			ListNode *q = p->link;
+//			p->link = p->link->link;
+//			free(q);
+//			list->size--;
+//			return;
+//		}
+//		p = p->link;
+//	}
+//	if (p->data == item) { // 마지막 거 지우기
+//		ListNode *q = list->head;
+//		for (int i = 0; i < list->size - 2;i++) {
+//			q = q->link;
+//		}
+//		q->link = NULL;
+//		list->tail = q;
+//		free(p);
+//		list->size--;
+//		return;
+//	}
+//}
+
 //#include <stdio.h>
 //#include <stdlib.h>
 //#define MAX_ARRAY_SIZE 100
