@@ -1,4 +1,3 @@
-// 미완성
 #include <stdio.h>
 #include <stdlib.h>
 typedef int element;
@@ -9,44 +8,80 @@ typedef struct ListNodeTag {
 	struct ListNodeTag *link;
 }ListNode;
 typedef struct ListTypeTag {
+	int max_row;
+	int max_col;
 	ListNode *head;
 }ListType;
 void add(ListType *list, int row, int col, element item) {
 	if (list == NULL) return;
+	if (row <= 0 || col <= 0) {
+		printf("잘못된 행이나 열을 입력하셨습니다.\n");
+		return;
+	}
+	if (row > list->max_row) list->max_row = row;
+	if (col > list->max_col) list->max_col = col;
 	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
 	if (p == NULL) {
 		fprintf(stderr, "Allocation error!");
 		exit(1);
 	}
-	ListNode *q, *r;
 	p->row = row;
 	p->col = col;
 	p->data = item;
-	if (list->head == NULL) {
-		list->head = p;
-		return;
-	}
-	q = list->head;
-	r = NULL;
-	while (q != NULL && row > q->row) {
+	p->link = NULL;
+	ListNode *q = list->head;
+	ListNode *r = NULL;
+	while (q != NULL && (q->row < row || (q->row == row && q->col < col))) {
 		r = q;
 		q = q->link;
 	}
-	if (q->row == row) {
-		while (q != NULL && col > q->col) {
-			r = q;
-			q = q->link;
-		}
-	}
-	if (q == NULL) {
-		r->link = p;
+	if (r == NULL) {
+		p->link = list->head;
+		list->head = p;
 		return;
 	}
 	r->link = p;
 	p->link = q;
 }
+void clear(ListType *list) {
+	if (list == NULL|| list->head == NULL) return;
+	ListNode *p = list->head;
+	while (p != NULL) {
+		list->head = p->link;
+		free(p);
+		p = list->head;
+	}
+	list->max_row = 0;
+	list->max_col = 0;
+}
+void display(ListType *list) {
+	if (list == NULL || list->head == NULL) return;
+	ListNode *p = list->head;
+	for (int i = 1; i <= list->max_row; i++) {
+		for (int j = 1; j <= list->max_col; j++) {
+			if (p != NULL && p->row == i && p->col == j) {
+				printf("%d ", p->data);
+				p = p->link;
+			}
+			else {
+				printf("%d ", 0);
+			}
+		}
+		printf("\n");
+	}
+}
+
 int main() {
-	
+	ListType *p = (ListType *)malloc(sizeof(ListType));
+	p->head = NULL;
+	p->max_col = 0;
+	p->max_row = 0;
+	add(p, 3, 4, 2);
+	add(p, 2, 1, 3);
+	add(p, 3, 5, 2);
+	display(p);
+	clear(p);
+	free(p);
 	return 0;
 }
 //#include <stdio.h>
