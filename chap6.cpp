@@ -3,82 +3,205 @@
 #include <stdlib.h>
 typedef int element;
 typedef struct ListNodeTag {
+	int row;
+	int col;
 	element data;
 	struct ListNodeTag *link;
 }ListNode;
 typedef struct ListTypeTag {
-	int size;
 	ListNode *head;
-	ListNode *tail;
 }ListType;
-void add(ListType *list, element item) {
+void add(ListType *list, int row, int col, element item) {
 	if (list == NULL) return;
 	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
-	ListNode *q;
 	if (p == NULL) {
-		fprintf(stderr, "alloc error!");
+		fprintf(stderr, "Allocation error!");
 		exit(1);
 	}
+	ListNode *q, *r;
+	p->row = row;
+	p->col = col;
 	p->data = item;
 	if (list->head == NULL) {
-		p->link = NULL;
 		list->head = p;
-		list->tail = p;
-		list->size++;
 		return;
 	}
 	q = list->head;
-	if (q->data >= item) {
-		p->link = q;
-		list->head = p;
-		list->size++;
-		return;
-	}
-	while (q->link != NULL && q->link->data < item) { 
+	r = NULL;
+	while (q != NULL && row > q->row) {
+		r = q;
 		q = q->link;
 	}
-	p->link = q->link;
-	q->link = p;
-	if (p->link == NULL) {
-		list->tail = p;
-	}
-	list->size++;
-}
-void del_element(ListType *list, element item) {
-	if (list->head == NULL) return;
-	ListNode *p = list->head;
-	ListNode *q = NULL;
-
-	while (p != NULL && p->data != item) {
-		q = p;
-		p = p->link;
-}
-	if (p == NULL) return; // 찾는 값이 없을 때
-	if (p == list->head) {
-		if (list->size == 1) { // 리스트에 단 하나의 노드만 있을 때
-			list->head = NULL;
-			list->tail = NULL;
-			free(p);
-			list->size--;
-			return;
+	if (q->row == row) {
+		while (q != NULL && col > q->col) {
+			r = q;
+			q = q->link;
 		}
-		list->head = p->link; // 여러 개의 노드가 있는데 첫 번째 노드를 지울 때
-		free(p);
-		list->size--;
+	}
+	if (q == NULL) {
+		r->link = p;
 		return;
 	}
-	q->link = p->link;
-	free(p);
-	list->size--;
-	if (q->link == NULL) {
-		list->tail = q;
-	}
-	return;
+	r->link = p;
+	p->link = q;
 }
 int main() {
 	
 	return 0;
 }
+//#include <stdio.h>
+//#include <stdlib.h>
+//typedef int element;
+//typedef struct ListNodeTag {
+//	element data;
+//	struct ListNodeTag *link;
+//}ListNode;
+//typedef struct ListTypeTag {
+//	int size;
+//	ListNode *head;
+//	ListNode *tail;
+//}ListType;
+//void add(ListType *list, element item) {
+//	if (list == NULL) return;
+//	ListNode *p = (ListNode *)malloc(sizeof(ListNode));
+//	ListNode *q;
+//	if (p == NULL) {
+//		fprintf(stderr, "alloc error!");
+//		exit(1);
+//	}
+//	p->data = item;
+//	if (list->head == NULL) {
+//		p->link = NULL;
+//		list->head = p;
+//		list->tail = p;
+//		list->size++;
+//		return;
+//	}
+//	q = list->head;
+//	if (q->data >= item) {
+//		p->link = q;
+//		list->head = p;
+//		list->size++;
+//		return;
+//	}
+//	while (q->link != NULL && q->link->data < item) { 
+//		q = q->link;
+//	}
+//	p->link = q->link;
+//	q->link = p;
+//	if (p->link == NULL) {
+//		list->tail = p;
+//	}
+//	list->size++;
+//}
+//void del_element(ListType *list, element item) {
+//	if (list == NULL || list->head == NULL) return;
+//	ListNode *p = list->head;
+//	ListNode *q = NULL;
+//
+//	while (p != NULL && p->data != item) {
+//		q = p;
+//		p = p->link;
+//}
+//	if (p == NULL) return; // 찾는 값이 없을 때
+//	if (p == list->head) {
+//		if (list->size == 1) { // 리스트에 단 하나의 노드만 있을 때
+//			list->head = NULL;
+//			list->tail = NULL;
+//			free(p);
+//			list->size--;
+//			return;
+//		}
+//		list->head = p->link; // 여러 개의 노드가 있는데 첫 번째 노드를 지울 때
+//		free(p);
+//		list->size--;
+//		return;
+//	}
+//	q->link = p->link;
+//	free(p);
+//	list->size--;
+//	if (q->link == NULL) {
+//		list->tail = q;
+//	}
+//	return;
+//}
+//void clear(ListType *list) {
+//	if (list == NULL || list->head == NULL) return;
+//	ListNode *p = list->head;
+//	list->tail = NULL;
+//	list->size = 0;
+//	while (p != NULL) {
+//		list->head = p->link;
+//		free(p);
+//		p = list->head;
+//	}
+//}
+//void is_in_list(ListType *list, element item) {
+//	if (list == NULL) return;
+//	if (list->size == 0) {
+//		printf("리스트가 공백상태입니다.\n");
+//		return;
+//	}
+//	ListNode *p = list->head;
+//	while (p != NULL) {
+//		if (p->data == item) {
+//			printf("리스트에 %d가 있습니다.\n", item);
+//			return;
+//		}
+//		p = p->link;
+//	}
+//	printf("리스트에 %d가 없습니다.\n", item);
+//}
+//int get_length(ListType *list) {
+//	if (list == NULL) return -1;
+//	return list->size;
+//}
+//void is_empty(ListType *list) {
+//	if (list == NULL) return;
+//	if (list->size == 0) {
+//		printf("리스트가 공백상태입니다.\n");
+//		return;
+//	}
+//	printf("리스트가 공백상태가 아닙니다\n");
+//}
+//void display(ListType *list) {
+//	if (list == NULL || list->head == NULL) return;
+//	ListNode *p = list->head;
+//	printf("%d", p->data);
+//	p = p->link;
+//	while (p != NULL) {
+//		printf(" -> ");
+//		printf("%d", p->data);
+//		p = p->link;
+//	}
+//	printf("\n");
+//}
+//
+//int main() {
+//	ListType *p = (ListType *)malloc(sizeof(ListType));
+//	if (p == NULL) {
+//		fprintf(stderr, "allocation error!\n");
+//		exit(1);
+//	};
+//	p->head = NULL;
+//	p->tail = NULL;
+//	p->size = NULL;
+//	add(p, 6);
+//	add(p, 3);
+//	add(p, 4);
+//	add(p, 5);
+//	add(p, 2);
+//	add(p, 1);
+//	del_element(p, 6);
+//	is_in_list(p, 5);
+//	is_in_list(p, 6);
+//	is_empty(p);
+//	display(p);
+//	clear(p);
+//	is_empty(p);
+//	free(p);
+//	return 0;
+//}
 // 짜느라 정말 오래걸렸는데 이렇게 할 필요가 없던 코드
 // 모든 상황을 if-else문으로 처리하려다 보니
 // 자꾸 꼬이고 코드를 짜기 매우 어려웠다.
