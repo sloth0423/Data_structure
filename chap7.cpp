@@ -1,5 +1,3 @@
-// 7장 연습문제 6번 다시 풀기
-// 제대로 역순으로 출력하도록 (다시 풀고 github wiki에도 수정하기)
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -70,6 +68,90 @@ int main() {
 	free(head);
 	return 0;
 }
+//#include <stdio.h>
+//#include <stdlib.h>
+//
+//typedef int element;
+//typedef struct DListNodeTag {
+//	struct DListNodeTag *flink;
+//	element data;
+//	struct DListNodeTag *blink;
+//}DListNode;
+//
+//void init(DListNode *head) {
+//	head->blink = head;
+//	head->flink = head;
+//}
+//void ins(DListNode *before, element data) {
+//	DListNode *p = (DListNode *)malloc(sizeof(DListNode));
+//	if (p == NULL) {
+//		fprintf(stderr, "Allocation error!");
+//		exit(1);
+//	}
+//	p->data = data;
+//	p->flink = before;
+//	p->blink = before->blink;
+//	before->blink = p;
+//	p->blink->flink = p;
+//}
+//void ins_reverse(DListNode *after, element data) {
+//	DListNode *p = (DListNode *)malloc(sizeof(DListNode));
+//	if (p == NULL) {
+//		fprintf(stderr, "Allocation Error!");
+//		exit(1);
+//	}
+//	p->data = data;
+//	p->blink = after;
+//	p->flink = after->flink;
+//	after->flink = p;
+//	p->flink->blink = p;
+//}
+//void del(DListNode *head, DListNode *removed) {
+//	if (head == removed) return;
+//	removed->flink->blink = removed->blink;
+//	removed->blink->flink = removed->flink;
+//	free(removed);
+//}
+//void print_list(DListNode *head) {
+//	DListNode *p = head->blink;
+//	while (p != head) {
+//		printf("<-| |%d| |-> ", p->data);
+//		p = p->blink;
+//	}
+//	printf("\n");
+//}
+//void print_list_reverse(DListNode *head) {
+//	DListNode *p = head->flink;
+//	printf("데이터를 역순으로 출력: ");
+//	while (p != head) {
+//		printf("%d ",p->data);
+//		p = p->flink;
+//	}
+//}
+//
+//int main() {
+//	int num = 0;
+//	DListNode *head = (DListNode *)malloc(sizeof(DListNode));
+//	if (head == NULL) {
+//		fprintf(stderr, "Allocation error!");
+//		exit(1);
+//	}
+//	init(head);
+//	printf("데이터의 개수를 입력하시오 : ");
+//	scanf_s("%d", &num);
+//	for (int i = 1; i <= num; i++) {
+//		int input = 0;
+//		printf("노드 #%d의 데이터를 입력하시오: ", i);
+//		scanf_s("%d", &input);
+//		ins_reverse(head, input);
+//	}
+//	print_list_reverse(head);
+//	for (int i = 0; i < num; i++) {
+//		del(head, head->blink);
+//	}
+//	free(head);
+//	return 0;
+//}
 //#include <stdio.h>
 //#include <stdlib.h>
 //
